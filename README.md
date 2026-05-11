@@ -12,7 +12,7 @@
 
 ## Data Source
 
-数据来源于 [janada28.cc] / [janada28.com] / [janada28vip.com]，通过 API 接口获取实时开奖数据。
+数据来源于 janada28.cc / janada28.com / janada28vip.com，通过 API 接口获取实时开奖数据。
 
 ## Usage
 
