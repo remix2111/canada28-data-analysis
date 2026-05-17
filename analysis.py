@@ -88,6 +88,56 @@ def trend_analysis(results):
         print(f"  {s:02d}: {cnt}次 {bar}")
 
 
+def predict(results):
+    \"\"\"基于历史数据生成简单预测\"\"\"
+    if not results or len(results) < 10:
+        print("数据不足，无法预测")
+        return
+
+    # 统计最近趋势
+    recent = results[:20]
+    big_ratio = sum(1 for r in recent if r["sum"] >= 14) / len(recent)
+    odd_ratio = sum(1 for r in recent if r["sum"] % 2 != 0) / len(recent)
+
+    # 热号和冷号和值
+    sum_freq = {}
+    for r in results:
+        sum_freq[r["sum"]] = sum_freq.get(r["sum"], 0) + 1
+
+    hot_sums = sorted(sum_freq.items(), key=lambda x: -x[1])[:3]
+    cold_sums = sorted(sum_freq.items(), key=lambda x: x[1])[:3]
+
+    # 连续出现模式
+    last_5 = results[:5]
+    streak_big = sum(1 for r in last_5 if r["sum"] >= 14)
+    streak_small = sum(1 for r in last_5 if r["sum"] < 14)
+
+    print(f"\n🔮 预测分析（基于近 {len(results)} 期数据）")
+    print(f"{'='*40}")
+    print(f"  大小趋势: 大 {big_ratio*100:.0f}% / 小 {(1-big_ratio)*100:.0f}%")
+    print(f"  单双趋势: 单 {odd_ratio*100:.0f}% / 双 {(1-odd_ratio)*100:.0f}%")
+    if streak_big >= 4:
+        print(f"  ⚠️ 连开 {streak_big} 期大，注意回调风险")
+    elif streak_small >= 4:
+        print(f"  ⚠️ 连开 {streak_small} 期小，注意回调风险")
+    print(f"\n  🔥 热门和值: {', '.join(f'{s:02d}({c}次)' for s, c in hot_sums)}")
+    print(f"  ❄️ 冷门和值: {', '.join(f'{s:02d}({c}次)' for s, c in cold_sums)}")
+    print(f"\n  💡 建议关注: ", end="")
+    suggestions = []
+    if big_ratio > 0.6:
+        suggestions.append("小")
+    elif big_ratio < 0.4:
+        suggestions.append("大")
+    if odd_ratio > 0.6:
+        suggestions.append("双")
+    elif odd_ratio < 0.4:
+        suggestions.append("单")
+    if suggestions:
+        print(f"偏向 {'、'.join(suggestions)}")
+    else:
+        print("走势均衡，观望为主")
+
+
 def export_csv(results, filename):
     """导出为 CSV"""
     if not results:
@@ -107,6 +157,7 @@ if __name__ == "__main__":
     parser.add_argument("--lottery", type=int, default=10029, help="彩票代码 (默认 10029 加拿大28)")
     parser.add_argument("--count", type=int, default=50, help="获取期数 (默认 50)")
     parser.add_argument("--trend", action="store_true", help="显示趋势分析")
+    parser.add_argument("--predict", action="store_true", help="生成预测建议")
     parser.add_argument("--export", type=str, help="导出 CSV 文件名")
 
     args = parser.parse_args()
@@ -134,6 +185,9 @@ if __name__ == "__main__":
 
     if args.trend:
         trend_analysis(results)
+
+    if args.predict:
+        predict(results)
 
     if args.export:
         export_csv(results, args.export)

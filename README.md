@@ -23,6 +23,9 @@ python3 analysis.py --lottery 10029 --count 50
 # 查看趋势统计
 python3 analysis.py --lottery 10029 --trend
 
+# AI预测建议（基于热冷号+趋势分析）
+python3 analysis.py --lottery 10029 --predict
+
 # 导出 CSV
 python3 analysis.py --lottery 10029 --export results.csv
 ```
@@ -39,3 +42,7 @@ python3 analysis.py --lottery 10029 --export results.csv
 ## License
 
 MIT
+
+---
+
+**需要定制 PC28 预测站或数据分析工具？** ✈️ [@bryan2888](https://t.me/bryan2888)
